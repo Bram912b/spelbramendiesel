@@ -90,38 +90,45 @@ class Vijand {
 
   toon() {
     image(this.sprite,this.x,this.y,raster.celGrootte,raster.celGrootte);
-  }
+  } 
 }
-class Raket{
-  constructor(x,y){
+
+class Raket {
+  constructor(x, snelheid) {
     this.x = x;
-    this.y = y;
-    this.sprite = null;
-    this.snelheidY = -5;
-  }
+    this.y = 500; 
+    this.snelheid = snelheid;
+    this.beginSnelheid = snelheid;
+    this.zwaartekracht = 0.5;
+    this.sprite = null; 
+}
 
 beweeg() {
-  // zwaartekracht remt de raket af tijdens stijgen 
-  this.snelheidY += 0.15;
+  this.snelheid += this.zwaartekracht;
+  this.y += this.snelheid;
 
-  //bewwegt raketje
-  this.y += this.snelheidY;
+  if (this.y >= 500) {
+    this.y = 500;
+    this.snelheid = this.beginSnelheid;
+  } 
 
-  // bovenkant bereikt dus weer naar beneden 
-  if()
-}
-toon() {
-image(
-  this.sprite,
-  this.x,
-  this.y,
-  raster.celGrootte,
-  raster.celGrootte
-)
   
+   if (this.y < 0) {
+     this.y = 0;
+     this.snelheid = 0;
+  }
+}
+
+toon() {
+  image(this.sprite, this.x, this.y,
+       raster.celGrootte, raster.celGrootte);
+}
 }
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
+
+raketPlaatje = loadImage("images/sprites/raket.png");
+
 }
 
 function setup() {
@@ -149,17 +156,35 @@ function setup() {
   bob = new Vijand(600,400);
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
-}
 
+raket1 = new Raket(floor(random(5,9))*100, -12);
+raket2 = new Raket(floor(random(5,9))*100, -15);
+raket3 = new Raket(floor(random(5,9))*100, -18);
+
+raket1.sprite = raketPlaatje;
+raket2.sprite = raketPlaatje;
+raket3.sprite = raketPlaatje;
+}
 function draw() {
   background(brug);
   raster.teken();
+  
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
+
+  raket1.beweeg();
+  raket2.beweeg();
+  raket3.beweeg();
+  
   eve.toon();
   alice.toon();
   bob.toon();
+
+  raket1.toon();
+  raket2.toon();
+  raket3.toon();
+
 
   if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)) {
     noLoop();
