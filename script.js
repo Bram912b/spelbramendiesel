@@ -14,13 +14,38 @@ class Raster {
     noFill();
     stroke('grey');
     for (var rij = 0;rij < this.aantalRijen;rij++) {
-      for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {
-        rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+      for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {    rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
       }
     }
     pop();
   }
+isRand(rij, kolom) {
+ return (rij == 0 || rij == this.aantalRijen - 1 ||
+        kolom == 0 || kolom == this.aantalKolommen -1);
 }
+tekenRand() {
+  push();
+  fill(0, 90, 255, 160);
+  stroke('grey')
+  for (var rij = 0;rij < this.aantalRijen;rij++) {
+    for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {
+      if (this.isRand(rij, kolom)) {
+        rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+      }
+    }
+  }
+  pop();
+}
+
+  MuisOpRand() {
+    if (mouseX < 0 || mouseX >= canvas.width || mouseY >= canvas.height) {
+      return false;
+    }
+    var kolom = floor(mouseX / this.celGrootte);
+    var rij = floor(mouseY / this.celGrootte);
+    return this.isRand(rij, kolom);
+  }
+} 
 
 class Jos {
   constructor() {
@@ -239,11 +264,14 @@ raket3.sprite = raketPlaatje;
 
 bal = new Pingpongbal(100, 100);
 }
-
 function draw() {
+  if (raster.MuisOpRand()){
+    background('purple');
+  }
+  else {
   background(brug);
-
-  push()
+  }
+  push();
   fill(255, 215, 0, 150);
   stroke('black');
   var blokGrootte = raster.celGrootte;
@@ -254,7 +282,8 @@ function draw() {
   pop();
   
   raster.teken();
-  
+  raster.tekenRand();
+
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
