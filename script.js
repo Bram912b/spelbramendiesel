@@ -24,12 +24,15 @@ class Raster {
 
 class Jos {
   constructor() {
-    this.x = 400;
-    this.y = 300;
+    this.startX = 400;
+    this.startY = 300;
+    this.x = this.startX;
+    this.y = this.startY;
     this.animatie = [];
     this.frameNummer =  3;
     this.stapGrootte = null;
     this.gehaald = false;
+    this.levens =3; 
   }
 
   beweeg() {
@@ -59,16 +62,20 @@ class Jos {
   }
 
   wordtGeraakt(vijand) {
-    if (this.x == vijand.x && this.y == vijand.y) {
-      return true;
+    return (this.x == vijand.x && this.y == vijand.y);
+    
     }
-    else {
-      return false;
+   raakt(object) {
+     var marge = raster.celGrootte * 0.7;
+     return (abs(this.x - object.x) < marge && abs(this.y - object.y) < marge);
     }
-  }
-
-  toon() {
-    image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
+  
+  verliesLeven() {
+ this.levens--;
+this.x = this.startX;
+this.y = this.startY;
+}
+  toon() {   image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
   }
 }  
 
@@ -124,13 +131,52 @@ toon() {
        raster.celGrootte, raster.celGrootte);
 }
 }
+
+class Pingpongbal {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.snelheidX = 6;
+    this.snelheidY = 6;
+    this.gegeten = false;
+  }
+    
+beweeg() {
+ if (this.gegeten) {
+   return;
+ }
+this.x += this.snelheidX;
+this.y += this.snelheidY;
+
+if (this.x <= 0 || this.x >= canvas.width - raster.celGrootte) {
+  this.snelheidX *= -1;
+}
+if (this.y <= 0 || this.y >= canvas.height - raster.celGrootte) {
+  this.snelheidY *= -1;
+}
+
+this.x = constrain(this.x, 0, canvas.width - raster.celGrootte);
+this.y = constrain(this.y, 0, canvas.height -raster.celGrootte);
+}
+
+toon() {
+  if (this.gegeten) {
+    return;
+  }
+  push();
+  fill('white');
+  stroke('orange');
+  strokeWeight(3);
+  var d = raster.celGrootte * 0.4;
+  ellipse(this.x + raster.celGrootte / 2, this.y + raster.celGrootte / 2, d, d);
+  pop();
+}
+}
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
-
 raketPlaatje = loadImage("images/sprites/raket.png");
 
 }
-
 function setup() {
   canvas = createCanvas(900,600);
   canvas.parent();
@@ -139,7 +185,6 @@ function setup() {
   textSize(90);
 
   raster = new Raster(6,9);
-
   raster.berekenCelGrootte();
 
   eve = new Jos();
@@ -157,6 +202,10 @@ function setup() {
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 
+cindy = new Vijand(200,100);
+cindy.stapGrootte = 1*eve.stapGrootte;
+cindy.sprite = loadImage("images/sprites/Cindy100px/Cindy.png");
+  
 raket1 = new Raket(floor(random(5,9))*100, -12);
 raket2 = new Raket(floor(random(5,9))*100, -15);
 raket3 = new Raket(floor(random(5,9))*100, -18);
@@ -164,7 +213,10 @@ raket3 = new Raket(floor(random(5,9))*100, -18);
 raket1.sprite = raketPlaatje;
 raket2.sprite = raketPlaatje;
 raket3.sprite = raketPlaatje;
+
+bal = new Pingpongbal(100, 100);
 }
+
 function draw() {
   background(brug);
   raster.teken();
@@ -172,24 +224,55 @@ function draw() {
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
-
+  cindy.beweeg();
+  
   raket1.beweeg();
   raket2.beweeg();
   raket3.beweeg();
+  bal.beweeg();
   
   eve.toon();
   alice.toon();
   bob.toon();
+  cindy.toon();
 
   raket1.toon();
   raket2.toon();
   raket3.toon();
+  bal.toon();
 
 
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)) {
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)  || eve.wordtGeraakt(cindy)) {
+    eve.verliesLeven();
+}
+
+else if (eve.raakt(raket1) || eve.raakt(raket2) || eve.raakt(raket3)) {
+  eve.verliesLeven();
+}
+
+if(!bal.gegeten && eve.raakt(bal)) {
+  bal.gegeten = true;
+  eve.levens++;
+}
+
+push();
+textSize(30);
+fill('white');
+stroke('black');
+strokeWeight(4);
+text("Levens: " + eve.levens, 10, 40);
+pop();
+  
+ 
+  
+  
+if (eve.levens <= 0) {
+    background('red');
+    fill('white');
+    text("Game over",30,300);
     noLoop();
-  }
-
+}
+    
   if (eve.gehaald) {
     background('green');
     fill('white');
