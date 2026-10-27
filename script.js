@@ -102,11 +102,13 @@ class Vijand {
 
 class Raket {
   constructor(x, snelheid) {
+    var schaal = raster.celGrootte / 100;
     this.x = x;
-    this.y = 500; 
-    this.snelheid = snelheid;
-    this.beginSnelheid = snelheid;
-    this.zwaartekracht = 0.5;
+    this.grond = canvas.height - raster.celGrootte;
+    this.y = this.grond; 
+    this.snelheid = snelheid * schaal;
+    this.beginSnelheid = this.snelheid;
+    this.zwaartekracht = 0.5 * schaal;
     this.sprite = null; 
 }
 
@@ -205,7 +207,7 @@ function setup() {
   textFont("Verdana");
   textSize(90);
 
-  raster = new Raster(6,9);
+  raster = new Raster(12,18);
   raster.berekenCelGrootte();
 
   eve = new Jos();
@@ -226,9 +228,10 @@ function setup() {
   cindy = new Vijand(200,100);
   cindy.stapGrootte = 1*eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Cindy100px/Cindy.png")
-raket1 = new Raket(floor(random(5,9))*100, -12);
-raket2 = new Raket(floor(random(5,9))*100, -15);
-raket3 = new Raket(floor(random(5,9))*100, -18);
+  
+raket1 = new Raket(floor(random(9,18))*raster.celGrootte, -12);
+raket2 = new Raket(floor(random(9,18))*raster.celGrootte, -15);
+raket3 = new Raket(floor(random(9,18))*raster.celGrootte, -18);
 
 raket1.sprite = raketPlaatje;
 raket2.sprite = raketPlaatje;
@@ -243,7 +246,7 @@ function draw() {
   push()
   fill(255, 215, 0, 150);
   stroke('black');
-  var blokGrootte = 50;
+  var blokGrootte = raster.celGrootte;
   var aantalBlokken = 8;
   var piramideX = (canvas.width - aantalBlokken * blokGrootte) / 2;
   var piramideY = (canvas.height - aantalBlokken * blokGrootte) / 2;
