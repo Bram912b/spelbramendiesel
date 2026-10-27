@@ -172,6 +172,17 @@ toon() {
   pop();
 }
 }
+function tekenOmgekeerdePiramide(aantal, x, y, grootte) {
+
+ if (aantal < 1) {
+   return;
+ }
+
+for (var i = 0; i < aantal; i++) {
+  rect(x + i * grootte, y, grootte, grootte);
+}
+tekenOmgekeerdePiramide(aantal - 1, x + grootte / 2, y + grootte, grootte);
+}
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
 raketPlaatje = loadImage("images/sprites/raket.png");
@@ -202,10 +213,9 @@ function setup() {
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 
-cindy = new Vijand(200,100);
-cindy.stapGrootte = 1*eve.stapGrootte;
-cindy.sprite = loadImage("images/sprites/Cindy100px/Cindy.png");
-  
+  cindy = new Vijand(200,100);
+  cindy.stapGrootte = 1*eve.stapGrootte;
+  cindy.sprite = loadImage("images/sprites/Cindy100px/Cindy.png")
 raket1 = new Raket(floor(random(5,9))*100, -12);
 raket2 = new Raket(floor(random(5,9))*100, -15);
 raket3 = new Raket(floor(random(5,9))*100, -18);
@@ -219,6 +229,17 @@ bal = new Pingpongbal(100, 100);
 
 function draw() {
   background(brug);
+
+  push()
+  fill(255, 215, 0, 150);
+  stroke('black');
+  var blokGrootte = 50;
+  var aantalBlokken = 8;
+  var piramideX = (canvas.width - aantalBlokken * blokGrootte) / 2;
+  var piramideY = (canvas.height - aantalBlokken * blokGrootte) / 2;
+  tekenOmgekeerdePiramide(aantalBlokken, piramideX, piramideY, blokGrootte);
+  pop();
+  
   raster.teken();
   
   eve.beweeg();
