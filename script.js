@@ -36,19 +36,19 @@ class Jos {
   }
 
   beweeg() {
-    if (keyIsDown(LEFT_ARROW)) {
+    if (keyIsDown(65)) {
       this.x -= this.stapGrootte;
       this.frameNummer = 2;
     }
-    if (keyIsDown(RIGHT_ARROW)) {
+    if (keyIsDown(68)) {
       this.x += this.stapGrootte;
       this.frameNummer = 1;
     }
-    if (keyIsDown(UP_ARROW)) {
+    if (keyIsDown(87)) {
       this.y -= this.stapGrootte;
       this.frameNummer = 4;
     }
-    if (keyIsDown(DOWN_ARROW)) {
+    if (keyIsDown(83)) {
       this.y += this.stapGrootte;
       this.frameNummer = 5;
     }
@@ -183,6 +183,16 @@ for (var i = 0; i < aantal; i++) {
 }
 tekenOmgekeerdePiramide(aantal - 1, x + grootte / 2, y + grootte, grootte);
 }
+function toonEindscherm(kleur, boodschap) {
+  background(kleur);
+  push();
+  fill('white')
+  textSize(80)
+  text(boodschap, 30, 300);
+  pop();
+  noLoop();
+}
+
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
 raketPlaatje = loadImage("images/sprites/raket.png");
@@ -283,21 +293,10 @@ stroke('black');
 strokeWeight(4);
 text("Levens: " + eve.levens, 10, 40);
 pop();
-  
- 
-  
-  
 if (eve.levens <= 0) {
-    background('red');
-    fill('white');
-    text("Game over",30,300);
-    noLoop();
-}
-    
-  if (eve.gehaald) {
-    background('green');
-    fill('white');
-    text("Je hebt gewonnen!",30,300);
-    noLoop();
+  toonEindscherm('red', 'Game over!');
+  }
+else if (eve.gehaald) {
+  toonEindscherm('green', 'Je hebt gewonnen!');
   }
 }
